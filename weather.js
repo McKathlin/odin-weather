@@ -1,0 +1,1 @@
+console.log("This script needs to fetch weather data.");

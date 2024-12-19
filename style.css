@@ -1,0 +1,23 @@
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  --default-font: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+  --text-color: #24282c;
+  --back-color: #c0c8d0;
+
+  font-family: var(--default-font, sans-serif);
+  color: var(--text-color);
+  background-color: var(--back-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --text-color: #e8e4dd;
+    --back-color: #182028;
+  }
+}

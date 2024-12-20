@@ -20,16 +20,19 @@
       <p>Loading<span id="ellipsis"></span></p>
     </section>
     <section id="results" class="hidden">
-      <h1 class="section-head">Weather in <span id="location-output"></span></h1>
+      <h1 class="section-head"><span id="location-output"></span></h1>
+      <div id="low-temp-card" class="card temp-card">
+        <h2 class="heading low">Low</h2>
+        <h2 class="temp-text"><span class="temperature">??</span>&deg; F</h2>
+        <meter class="thermometer" min="0" max="100">?? degrees Fahrenheit</meter>
+      </div>
       <div id="high-temp-card" class="card temp-card">
         <h2 class="heading high">High</h2>
         <h2 class="temp-text"><span class="temperature">??</span>&deg; F</h2>
         <meter class="thermometer" min="0" max="100">?? degrees Fahrenheit</meter>
       </div>
-      <div id="low-temp-card" class="card temp-card">
-        <h2 class="heading low">Low</h2>
-        <h2 class="temp-text"><span class="temperature">??</span>&deg; F</h2>
-        <meter class="thermometer" min="0" max="100">?? degrees Fahrenheit</meter>
+      <div id="condition-card" class="card">
+        
       </div>
     </section>
   </main>

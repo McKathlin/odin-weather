@@ -13,7 +13,13 @@ body {
   font-family: var(--default-font, sans-serif);
   color: var(--text-color);
   background-color: var(--back-color);
-  padding: 16px;
+
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  align-items: center;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,4 +31,35 @@ body {
 
 .hidden {
   display: none !important;
+}
+
+main {
+  padding: 16px;
+  flex: 1;
+}
+
+/* Header */
+
+header {
+  padding: 16px;
+  flex: 0;
+}
+
+/* Loading section */
+
+#loading {
+  width: 16ch;
+}
+
+/* Results section */
+
+/* Footer */
+
+footer {
+  padding: 8px;
+  flex: 0;
+}
+
+footer a {
+  color: var(--text-color);
 }

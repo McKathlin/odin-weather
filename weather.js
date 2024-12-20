@@ -98,6 +98,27 @@ const LoadingDisplay = (function () {
 }());
 
 //-----------------------------------------------------------------------------
+// Title card
+//-----------------------------------------------------------------------------
+
+const TitleCard = (function () {
+  const locationNode = document.getElementById('location-output');
+
+  let card = {};
+
+  Object.defineProperty(card, 'location', {
+    get: function () {
+      return locationNode.innerText;
+    },
+    set: function (address) {
+      locationNode.innerText = address;
+    },
+  });
+
+  return card;
+}());
+
+//-----------------------------------------------------------------------------
 // Thermometer cards
 //-----------------------------------------------------------------------------
 
@@ -124,6 +145,8 @@ class ThermometerCard {
     this._thermometerNode.value = temp;
     this._thermometerNode.innerText = `${temp} degrees Fahrenheit`;
   }
+
+  // TODO: Change the card's color based on temperature.
 }
 
 HighTempCard = new ThermometerCard(document.getElementById('high-temp-card'));
@@ -139,8 +162,6 @@ const locationInput = document.getElementById('location-input');
 const fetchWeatherButton = document.getElementById('fetch-weather-button');
 
 const resultsSection = document.getElementById('results');
-
-const locationOutput = document.getElementById('location-output');
 
 //-----------------------------------------------------------------------------
 // Event listeners
@@ -170,21 +191,22 @@ async function loadWeatherResults () {
   }
 
   // Loading...
+  await hideElement(resultsSection);
   await LoadingDisplay.show();
   await sleep(2000);
 
   // Show the results when they're ready.
   const simpleWeather = await fetchWeatherIn(location);
   await LoadingDisplay.hide();
-  await sleep(500);
+  await sleep(400);
   await showWeatherResults(simpleWeather);
 }
 
 async function showWeatherResults (simpleWeather) {
   console.log("Simplified weather report:", simpleWeather);
-  locationOutput.innerText = simpleWeather.address;
+  TitleCard.location = simpleWeather.address;
   HighTempCard.temperature = simpleWeather.highTemp;
   LowTempCard.temperature = simpleWeather.lowTemp;
-  await sleep(200);
+  await sleep(250);
   await showElement(resultsSection);
 }

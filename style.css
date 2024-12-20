@@ -22,3 +22,7 @@ body {
     --back-color: #182028;
   }
 }
+
+.hidden {
+  display: none !important;
+}

@@ -10,10 +10,21 @@
 <body>
   <header>
     <form id="location-form">
-      <label for="location">Show the weather in</label>
-      <input id="location" type="search" placeholder="City or ZIP Code">
+      <label for="location-input">Show the weather in</label>
+      <input id="location-input" name="location" type="search" placeholder="City or ZIP Code">
       <button id="fetch-weather-button">Go</button>
     </form>
   </header>
+  <main>
+    <section id="loading" class="hidden">
+      <p>Loading<span id="ellipsis">...</span></p>
+    </section>
+    <section id="results" class="hidden">
+      <h1>Weather in <span id="location-output"></span></h1>
+    </section>
+  </main>
+  <footer>
+    <p>Made by <a href="https://github.com/McKathlin">McKathlin</a></p>
+  </footer>
 </body>
 </html>

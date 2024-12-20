@@ -28,10 +28,6 @@ async function fetchWeatherIn (locationStr) {
   return simplifyWeather(report);
 }
 
-//=============================================================================
-// Weather Information Processing
-//=============================================================================
-
 function simplifyWeather (fullReport) {
   const today = fullReport.days[0];
   return {
@@ -45,9 +41,6 @@ function simplifyWeather (fullReport) {
   };
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 // winddir key:
 // Direction is in degrees clockwise, starting from north-sourced.
@@ -55,6 +48,58 @@ function sleep(ms) {
 // 90 is from due west > (heading eastward)
 // 180 is from due south ^ (heading northward)
 // 270 is from due east < (heading westward)
+
+//=============================================================================
+// Display Components
+//=============================================================================
+// General helpers
+//-----------------------------------------------------------------------------
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function hideElement(element) {
+  element.classList.add('hidden');
+}
+
+async function showElement(element) {
+  element.classList.remove('hidden');
+}
+
+//-----------------------------------------------------------------------------
+// Loading section
+//-----------------------------------------------------------------------------
+
+const LoadingDisplay = (function () {
+  const section = document.getElementById('loading');
+  const ellipsis = document.getElementById('ellipsis');
+
+  const INTERVAL_DELAY = 250;
+  let intervalId = null;
+
+  const hide = async function () {
+    hideElement(section);
+    clearInterval(intervalId);
+  }
+
+  const show = async function () {
+    intervalId = setInterval(function() {
+      if (ellipsis.innerText.length >= 3) {
+        ellipsis.innerText = '';
+      } else {
+        ellipsis.innerText += '.';
+      }
+    }, INTERVAL_DELAY);
+    showElement(section);
+  }
+
+  return { hide, show };
+}());
+
+//-----------------------------------------------------------------------------
+// Thermometer
+//-----------------------------------------------------------------------------
 
 //=============================================================================
 // Page Elements and Setup
@@ -65,7 +110,6 @@ function sleep(ms) {
 const locationInput = document.getElementById('location-input');
 const fetchWeatherButton = document.getElementById('fetch-weather-button');
 
-const loadingSection = document.getElementById('loading');
 const resultsSection = document.getElementById('results');
 
 const locationOutput = document.getElementById('location-output');
@@ -98,28 +142,18 @@ async function loadWeatherResults () {
   }
 
   // Loading...
-  await showLoadingMessage();
+  await LoadingDisplay.show();
   await sleep(2000);
 
   // Show the results when they're ready.
   const simpleWeather = await fetchWeatherIn(location);
-  await hideLoadingMessage();
+  await LoadingDisplay.hide();
   await sleep(500);
   await showWeatherResults(simpleWeather);
-}
-
-async function showLoadingMessage () {
-  loadingSection.classList.remove('hidden');
-  // TODO: show a loading animation
-}
-
-async function hideLoadingMessage () {
-  loadingSection.classList.add('hidden');
-  // TODO: clean up loading information resources
 }
 
 async function showWeatherResults (simpleWeather) {
   console.log("Simplified weather report:", simpleWeather);
   locationOutput.innerText = simpleWeather.address;
-  resultsSection.classList.remove("hidden");
+  await showElement(resultsSection);
 }

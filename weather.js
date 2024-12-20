@@ -98,8 +98,36 @@ const LoadingDisplay = (function () {
 }());
 
 //-----------------------------------------------------------------------------
-// Thermometer
+// Thermometer cards
 //-----------------------------------------------------------------------------
+
+class ThermometerCard {
+  constructor (cardNode) {
+    this._cardNode = cardNode;
+    this._thermometerNode = cardNode.querySelector('.thermometer');
+    this._headingNode = cardNode.querySelector('.heading');
+    this._temperatureNode = cardNode.querySelector('.temperature');
+  }
+
+  get heading() {
+    return this._headingNode.innerText;
+  }
+  set heading(text) {
+    this._headingNode.innerText = text;
+  }
+
+  get temperature () {
+    return Number.parseFloat(this._thermometerNode.value);
+  }
+  set temperature (temp) {
+    this._temperatureNode.innerText = temp;
+    this._thermometerNode.value = temp;
+    this._thermometerNode.innerText = `${temp} degrees Fahrenheit`;
+  }
+}
+
+HighTempCard = new ThermometerCard(document.getElementById('high-temp-card'));
+LowTempCard = new ThermometerCard(document.getElementById('low-temp-card'));
 
 //=============================================================================
 // Page Elements and Setup
@@ -155,5 +183,8 @@ async function loadWeatherResults () {
 async function showWeatherResults (simpleWeather) {
   console.log("Simplified weather report:", simpleWeather);
   locationOutput.innerText = simpleWeather.address;
+  HighTempCard.temperature = simpleWeather.highTemp;
+  LowTempCard.temperature = simpleWeather.lowTemp;
+  await sleep(200);
   await showElement(resultsSection);
 }

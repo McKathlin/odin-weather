@@ -197,16 +197,17 @@ async function loadWeatherResults () {
 
   // Show the results when they're ready.
   const simpleWeather = await fetchWeatherIn(location);
-  await LoadingDisplay.hide();
-  await sleep(400);
   await showWeatherResults(simpleWeather);
 }
 
 async function showWeatherResults (simpleWeather) {
   console.log("Simplified weather report:", simpleWeather);
+
   TitleCard.location = simpleWeather.address;
   HighTempCard.temperature = simpleWeather.highTemp;
   LowTempCard.temperature = simpleWeather.lowTemp;
-  await sleep(250);
+
+  await sleep(500);
+  await LoadingDisplay.hide();
   await showElement(resultsSection);
 }

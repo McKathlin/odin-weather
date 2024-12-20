@@ -1,3 +1,7 @@
+//=============================================================================
+// Weather querying
+//=============================================================================
+
 async function fetchWeatherIn (locationStr) {
   const BASE_PATH = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
   const MY_FREE_KEY = 'J9RKTKAX2HRTXCXKVAQE4DERZ';
@@ -23,9 +27,14 @@ async function fetchWeatherIn (locationStr) {
   return simplifyWeather(report);
 }
 
-function simplifyWeather (report) {
-  const today = report.days[0];
+//=============================================================================
+// Weather Information Processing
+//=============================================================================
+
+function simplifyWeather (fullReport) {
+  const today = fullReport.days[0];
   return {
+    address: fullReport.resolvedAddress,
     conditions: today.conditions.split(', '),
     description: today.description,
     highTemp: today.tempmax,
@@ -35,9 +44,35 @@ function simplifyWeather (report) {
   };
 }
 
-fetchWeatherIn('Indianapolis').then((simpleWeather) => {
-  console.log("Simplified weather report:", simpleWeather);
-});
+//=============================================================================
+// Page Elements and Setup
+//=============================================================================
+
+const locationInput = document.getElementById('location');
+const fetchWeatherButton = document.getElementById('fetch-weather-button');
+
+fetchWeatherButton.addEventListener('click', function(event) {
+  event.preventDefault();
+  showWeatherResults();
+})
+
+document.addEventListener('keypress', function(event) {
+  if (event.key == "Enter") {
+    event.preventDefault();
+    showWeatherResults();
+  }
+})
+
+function showWeatherResults() {
+  const location = locationInput.value.trim();
+  if (!location) {
+    return;
+  }
+
+  fetchWeatherIn(location).then((simpleWeather) => {
+    console.log("Simplified weather report:", simpleWeather);
+  });
+}
 
 // winddir key:
 // Direction is in degrees clockwise, starting from north-sourced.

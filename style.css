@@ -13,6 +13,7 @@ body {
   font-family: var(--default-font, sans-serif);
   color: var(--text-color);
   background-color: var(--back-color);
+  padding: 16px;
 }
 
 @media (prefers-color-scheme: dark) {

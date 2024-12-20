@@ -64,6 +64,52 @@ header {
   margin: 16px;
 }
 
+/* Temperature cards */
+
+#results .temp-card {
+  --thermometer-width: 1.6rem;
+  --thermometer-height: 8rem;
+
+  min-height: calc(var(--thermometer-height) + 20px);
+
+  display: grid;
+  grid-template-columns: 1fr var(--thermometer-width);
+  grid-template-rows: 1fr 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+#results .temp-card .heading {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+#results .temp-card .temp-text {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#results .temp-card meter.thermometer {
+  display: block;
+  height: var(--thermometer-width);
+  width: var(--thermometer-height);
+  transform: rotate(-90deg);
+
+  grid-column: 2;
+  grid-row: span 2;
+}
+
+meter.thermometer::-webkit-meter-bar {
+  background-color: #e0e0e0;
+  border: 3px solid #ffffff;
+}
+
+meter.thermometer::-webkit-meter-optimum-value,
+meter.thermometer::-webkit-meter-suboptimum-value,
+meter.thermometer::-webkit-meter-even-less-good-value {
+  background-color: #991122;
+}
+
 /* Footer */
 
 footer {

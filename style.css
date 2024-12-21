@@ -117,6 +117,15 @@ header {
   grid-row: 2;
 }
 
+.temp-card .temperature, .temp-card .deg {
+  font-size: 2.5rem;
+}
+
+.temp-card .fahrenheit {
+  font-weight: normal;
+  opacity: 0.7;
+}
+
 #results .temp-card meter.thermometer {
   display: block;
   height: var(--thermometer-width);

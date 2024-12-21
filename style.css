@@ -85,13 +85,21 @@ header {
 /* Temperature cards */
 
 #results .temp-card {
-  --thermometer-width: 1.6rem;
+  --thermometer-width: 1.2rem;
+  --thermometer-border-thickness: 3px;
+  --thermometer-inner-width: calc(
+    var(--thermometer-width) -
+    (var(--thermometer-border-thickness) * 2)
+  );
   --thermometer-height: 8rem;
+  --thermometer-empty-color: #d0d4d8;
+  --thermometer-fill-color: #991122;
 
   min-height: calc(var(--thermometer-height) + 20px);
+  padding: 8px 16px;
 
   display: grid;
-  grid-template-columns: 1fr var(--thermometer-width);
+  grid-template-columns: 1fr calc(var(--thermometer-width));
   grid-template-rows: 1fr 1fr;
   justify-items: center;
   align-items: center;
@@ -127,24 +135,40 @@ header {
 }
 
 #results .temp-card meter.thermometer {
+  grid-column: 2;
+  grid-row: span 2;
+}
+
+meter.thermometer {
   display: block;
   height: var(--thermometer-width);
   width: var(--thermometer-height);
   transform: rotate(-90deg);
 
-  grid-column: 2;
-  grid-row: span 2;
+  background: var(--thermometer-empty-color);
+  border: var(--thermometer-border-thickness) solid #ffffff;
+  border-radius: calc(var(--thermometer-width) / 2);
 }
 
 meter.thermometer::-webkit-meter-bar {
-  background-color: #d0d4d8;
-  border: 3px solid #ffffff;
+  background: var(--thermometer-empty-color);
+  height: var(--thermometer-inner-width);
+  border: none;
+  border-radius: calc(var(--thermometer-inner-width) / 2);
 }
 
 meter.thermometer::-webkit-meter-optimum-value,
 meter.thermometer::-webkit-meter-suboptimum-value,
 meter.thermometer::-webkit-meter-even-less-good-value {
-  background-color: #991122;
+  background: var(--thermometer-fill-color);
+  border: none;
+  border-radius: calc(var(--thermometer-inner-width) / 2);
+}
+
+meter.thermometer::-moz-meter-bar {
+  background: var(--thermometer-fill-color);
+  border: none;
+  border-radius: calc(var(--thermometer-inner-width) / 2);
 }
 
 /* Footer */

@@ -56,7 +56,7 @@ function simplifyWeather (fullReport) {
 //-----------------------------------------------------------------------------
 
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  //return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function hideElement(element) {
@@ -147,6 +147,89 @@ class ThermometerCard {
   }
 
   // TODO: Change the card's color based on temperature.
+}
+
+class ContinuousColorCode {
+  constructor (stops) {
+    this._stopNumbers = Object.keys(stops).sort((a, b) => a - b);
+    this._stops = Object.assign({}, stops);
+  }
+
+  get firstStopNumber () {
+    return this._stopNumbers[0];
+  }
+
+  get lastStopNumber () {
+    return this._stopNumbers[this._stopNumbers.length - 1];
+  }
+
+  getColorAt (num) {
+    if (num <= this.firstStopNumber) {
+      return this._stops[this.firstStopNumber];
+    }
+
+    if (num >= this.lastStopNumber()) {
+      return this._stops[this.lastStopNumber];
+    }
+
+    // Find the nearest stops.
+    let indexBelow = this._stopIndexBelow(num);
+    let lowerNum = this._stopNumbers[indexBelow];
+    if (lowerNum == num) {
+      // The number is equal to this stop!
+      return this._stops[lowerNum];
+    }
+
+    // Interpolate between the nearest stops.
+    let upperNum = this._stopNumbers[indexBelow + 1];
+    if (lowerNum > num || upperNum <= num) {
+      throw new Error(`${num} not between ${lowerNum} and ${upperNum}`);
+    }
+    const color = this._interpolateColor(
+      this._stops[lowerNum],
+      this._stops[upperNum],
+      (num - lowerNum) / (upperNum - lowerNum)
+    );
+    return this._colorToString(color);
+  }
+
+  _stopIndexBelow (num) {
+    let minIndex = 0;
+    let maxIndex = this._stopNumbers.length - 1;
+    let i = 0;
+    while (minIndex < maxIndex) {
+      i = Math.floor((maxIndex + minIndex) / 2);
+      if (this._stopNumbers[i] > num) {
+        maxIndex = i;
+      } else {
+        minIndex = i + 1;
+      }
+    }
+    return i;
+  }
+
+  // A fractionB between 0 and 1 represents a part-way point
+  // between colorA and colorB.
+  _interpolateColor (colorA, colorB, fractionB) {
+    if (fractionB <= 0) {
+      return Object.assign({}, colorA);
+    }
+
+    if (fractionB >= 1) {
+      return Object.assign({}, colorB);
+    }
+
+    const fractionA = 1 - fractionB;
+    return {
+      red: (colorA.red * fractionA) + (colorB.red * fractionB),
+      green: (colorA.green * fractionA) + (colorB.green * fractionB),
+      blue: (colorA.blue * fractionA) + (colorB.blue * fractionB),
+    };
+  }
+
+  _colorToString (color) {
+    return `rgb(${color.red}, ${color.green}, ${color.blue})`;
+  }
 }
 
 HighTempCard = new ThermometerCard(document.getElementById('high-temp-card'));

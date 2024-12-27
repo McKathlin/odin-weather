@@ -3,6 +3,13 @@
 //=============================================================================
 
 async function fetchWeatherIn (locationStr) {
+  // Check for special values
+  let easterEggWeather = this.fetchEasterEggWeather(locationStr);
+  if (easterEggWeather) {
+    await sleep(800);
+    return easterEggWeather;
+  }
+
   const BASE_PATH = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
   const MY_FREE_KEY = 'J9RKTKAX2HRTXCXKVAQE4DERZ';
   const RESPONSE_STATUS_OK = 200;
@@ -16,7 +23,6 @@ async function fetchWeatherIn (locationStr) {
   ];
   const INCLUDES_STR = INCLUDES.join(',');
   const query = `${BASE_PATH}/${location}?key=${MY_FREE_KEY}&include=${INCLUDES_STR}`;
-
 
   const response = await fetch(query);
   if (response.status != RESPONSE_STATUS_OK) {
@@ -41,6 +47,38 @@ function simplifyWeather (fullReport) {
   };
 }
 
+function fetchEasterEggWeather (str) {
+  if (str.includes('hotman') || str.includes('flamey-o')) {
+    return {
+      address: 'Flamey-O, Hotman',
+      description: 'scorching hot all day',
+      highTemp: 120,
+      lowTemp: 90,
+      windDirection: 0,
+      windSpeed: 0,
+    };
+  } else if (str.endsWith('hoth')) {
+    return {
+      address: 'Ice Breeze, Hoth',
+      description: 'freezing winds all day',
+      highTemp: -20,
+      lowTemp: -50,
+      windDirection: 355,
+      windSpeed: 60,
+    };
+  } else if (str == 'one') {
+    return {
+      address: 'One',
+      description: 'ONE!!!1',
+      highTemp: 2,
+      lowTemp: 1,
+      windDirection: 1,
+      windSpeed: 1,
+    };
+  } else {
+    return null;
+  }
+}
 
 // winddir key:
 // Direction is in degrees clockwise, starting from north-sourced.
@@ -56,7 +94,7 @@ function simplifyWeather (fullReport) {
 //-----------------------------------------------------------------------------
 
 function sleep(ms) {
-  //return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function hideElement(element) {
@@ -124,6 +162,7 @@ const TitleCard = (function () {
 
 class ThermometerCard {
   constructor (cardNode) {
+    this._colorMap = this._makeColorMap();
     this._cardNode = cardNode;
     this._thermometerNode = cardNode.querySelector('.thermometer');
     this._headingNode = cardNode.querySelector('.heading');
@@ -144,91 +183,50 @@ class ThermometerCard {
     this._temperatureNode.innerText = temp;
     this._thermometerNode.value = temp;
     this._thermometerNode.innerText = `${temp} degrees Fahrenheit`;
+    this._setBackgroundForTemperature(temp);
+    this._setHaloForTemperature(temp);
   }
 
-  // TODO: Change the card's color based on temperature.
-}
-
-class ContinuousColorCode {
-  constructor (stops) {
-    this._stopNumbers = Object.keys(stops).sort((a, b) => a - b);
-    this._stops = Object.assign({}, stops);
+  _setBackgroundForTemperature (temp) {
+    const GRADIENT_DIFF = 5;
+    const top = this._colorMap.getColorAt(temp + GRADIENT_DIFF).toHexString();
+    const mid = this._colorMap.getColorAt(temp).toHexString();
+    const bottom = this._colorMap.getColorAt(temp - GRADIENT_DIFF).toHexString();
+    const bg = `linear-gradient(${top}, ${mid}, ${bottom})`;
+    this._cardNode.style.setProperty('background', bg);
   }
 
-  get firstStopNumber () {
-    return this._stopNumbers[0];
-  }
+  _setHaloForTemperature (temp) {
+    const HEAT_HALO_CUTOFF = 80;
+    const COLD_HALO_CUTOFF = 32;
+    const HALO_SIZE_FACTOR = 0.5;
 
-  get lastStopNumber () {
-    return this._stopNumbers[this._stopNumbers.length - 1];
-  }
-
-  getColorAt (num) {
-    if (num <= this.firstStopNumber) {
-      return this._stops[this.firstStopNumber];
+    if (temp <= HEAT_HALO_CUTOFF && temp >= COLD_HALO_CUTOFF) {
+      this._cardNode.style.setProperty('box-shadow', 'none');
     }
 
-    if (num >= this.lastStopNumber()) {
-      return this._stops[this.lastStopNumber];
-    }
+    // Heat halos are hot red-orange; cold halos are frosty light blue.
+    const haloColor = temp > HEAT_HALO_CUTOFF ? '#ffbb11' : '#aaccff';
 
-    // Find the nearest stops.
-    let indexBelow = this._stopIndexBelow(num);
-    let lowerNum = this._stopNumbers[indexBelow];
-    if (lowerNum == num) {
-      // The number is equal to this stop!
-      return this._stops[lowerNum];
-    }
-
-    // Interpolate between the nearest stops.
-    let upperNum = this._stopNumbers[indexBelow + 1];
-    if (lowerNum > num || upperNum <= num) {
-      throw new Error(`${num} not between ${lowerNum} and ${upperNum}`);
-    }
-    const color = this._interpolateColor(
-      this._stops[lowerNum],
-      this._stops[upperNum],
-      (num - lowerNum) / (upperNum - lowerNum)
+    const tempIntensity = Math.max(
+      temp - HEAT_HALO_CUTOFF,
+      COLD_HALO_CUTOFF - temp
     );
-    return this._colorToString(color);
+
+    const haloSize = Math.ceil(tempIntensity * HALO_SIZE_FACTOR);
+    this._cardNode.style.setProperty(
+      'box-shadow',
+      `inset 0 0 ${haloSize}px ${haloColor}`
+    );
   }
 
-  _stopIndexBelow (num) {
-    let minIndex = 0;
-    let maxIndex = this._stopNumbers.length - 1;
-    let i = 0;
-    while (minIndex < maxIndex) {
-      i = Math.floor((maxIndex + minIndex) / 2);
-      if (this._stopNumbers[i] > num) {
-        maxIndex = i;
-      } else {
-        minIndex = i + 1;
-      }
-    }
-    return i;
-  }
-
-  // A fractionB between 0 and 1 represents a part-way point
-  // between colorA and colorB.
-  _interpolateColor (colorA, colorB, fractionB) {
-    if (fractionB <= 0) {
-      return Object.assign({}, colorA);
-    }
-
-    if (fractionB >= 1) {
-      return Object.assign({}, colorB);
-    }
-
-    const fractionA = 1 - fractionB;
-    return {
-      red: (colorA.red * fractionA) + (colorB.red * fractionB),
-      green: (colorA.green * fractionA) + (colorB.green * fractionB),
-      blue: (colorA.blue * fractionA) + (colorB.blue * fractionB),
-    };
-  }
-
-  _colorToString (color) {
-    return `rgb(${color.red}, ${color.green}, ${color.blue})`;
+  _makeColorMap () {
+    return new colorTools.GradientMap({
+      0: '#0011cc',
+      32: '#0077aa',
+      60: '#118811',
+      100: '#ff4400',
+    });
   }
 }
 

@@ -6,7 +6,7 @@ async function fetchWeatherIn (locationStr) {
   // Check for special values
   let easterEggWeather = this.fetchEasterEggWeather(locationStr);
   if (easterEggWeather) {
-    await sleep(800);
+    await sleep(200);
     return easterEggWeather;
   }
 
@@ -48,7 +48,16 @@ function simplifyWeather (fullReport) {
 }
 
 function fetchEasterEggWeather (str) {
-  if (str.includes('hotman') || str.includes('flamey-o')) {
+  if (str == 'example') {
+    return {
+      address: 'Example Town, Kentuckiana, USA',
+      description: 'default weather throughout the day',
+      highTemp: 55,
+      lowTemp: 45,
+      windDirection: 45,
+      windSpeed: 10,
+    };
+  } else if (str.includes('hotman') || str.includes('flamey-o')) {
     return {
       address: 'Flamey-O, Hotman',
       description: 'scorching hot all day',
@@ -233,6 +242,46 @@ class ThermometerCard {
 HighTempCard = new ThermometerCard(document.getElementById('high-temp-card'));
 LowTempCard = new ThermometerCard(document.getElementById('low-temp-card'));
 
+//-----------------------------------------------------------------------------
+// Wind card
+//-----------------------------------------------------------------------------
+
+class WindCard {
+  constructor(cardNode) {
+    this._cardNode = cardNode;
+    this._windSpeedNode = cardNode.querySelector('.wind-speed');
+    this._windArrowImage = cardNode.querySelector('.wind-arrow');
+    this._windSpeed = null;
+    this._windDirection = null;
+  }
+
+  get windSpeed() {
+    return this._windSpeed;
+  }
+
+  get windDirection() {
+    return this._windDirection;
+  }
+
+  setWind({ windSpeed, windDirection }) {
+    this._windSpeed = windSpeed;
+    this._windDirection = windDirection;
+    this._windSpeedNode.innerText = windSpeed;
+    this._styleArrow(windSpeed, windDirection);
+    this._styleBackground(windSpeed, windDirection);
+  }
+
+  _styleArrow(windSpeed, windDirection) {
+    // TODO
+  }
+
+  _styleBackground(windSpeed, windDirection) {
+    // TODO
+  }
+}
+
+TodayWindCard = new WindCard(document.getElementById('wind-card'));
+
 //=============================================================================
 // Page Elements and Setup
 //=============================================================================
@@ -274,7 +323,7 @@ async function loadWeatherResults () {
   // Loading...
   await hideElement(resultsSection);
   await LoadingDisplay.show();
-  await sleep(2000);
+  await sleep(1000);
 
   // Show the results when they're ready.
   const simpleWeather = await fetchWeatherIn(location);
@@ -287,8 +336,9 @@ async function showWeatherResults (simpleWeather) {
   TitleCard.location = simpleWeather.address;
   HighTempCard.temperature = simpleWeather.highTemp;
   LowTempCard.temperature = simpleWeather.lowTemp;
+  TodayWindCard.setWind(simpleWeather);
 
-  await sleep(500);
+  await sleep(200);
   await LoadingDisplay.hide();
   await showElement(resultsSection);
 }

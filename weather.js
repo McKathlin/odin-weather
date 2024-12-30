@@ -251,6 +251,7 @@ class WindCard {
     this._cardNode = cardNode;
     this._windSpeedNode = cardNode.querySelector('.wind-speed');
     this._windArrowImage = cardNode.querySelector('.wind-arrow');
+    this._windArrowContainer = cardNode.querySelector('.wind-graphic');
     this._windSpeed = null;
     this._windDirection = null;
   }
@@ -268,7 +269,8 @@ class WindCard {
     this._windDirection = windDirection;
     this._windSpeedNode.innerText = windSpeed;
     this._styleArrow(windSpeed, windDirection);
-    this._styleBackground(windSpeed, windDirection);
+    this._styleArrowContainer(windSpeed, windDirection);
+    this._styleCard(windSpeed, windDirection);
   }
 
   _styleArrow(windSpeed, windDirection) {
@@ -279,8 +281,23 @@ class WindCard {
     this._windArrowImage.style.setProperty('transform', `rotate(${windDirection}deg)`);
   }
 
-  _styleBackground(windSpeed, windDirection) {
-    // TODO
+  _styleArrowContainer(windSpeed, windDirection) {
+    const opacity = Math.min(0.02 * windSpeed, 1);
+    const gradientAngle = windDirection - 90;
+    const lightColor = new colorTools.Color(70, 140, 210, opacity);
+    const darkColor = new colorTools.Color(0, 0, 100, opacity);
+    const gradient = `#794186 repeating-linear-gradient(${gradientAngle}deg, ${lightColor}, ${lightColor} 6px, ${darkColor} 8px, ${darkColor} 14px, ${lightColor} 16px)`;
+    this._windArrowContainer.style.setProperty('background', gradient);
+  }
+
+  _styleCard(windSpeed, windDirection) {
+    // Like the arrow container, but with larger, blurrier, and more subdued stripes.
+    const opacity = Math.min(0.005 * windSpeed, 1);
+    const gradientAngle = windDirection - 90;
+    const lightColor = new colorTools.Color(70, 140, 210, opacity);
+    const darkColor = new colorTools.Color(0, 0, 100, opacity);
+    const gradient = `#5447a5 repeating-linear-gradient(${gradientAngle}deg, ${lightColor}, ${lightColor} 20px, ${darkColor} 30px, ${darkColor} 50px, ${lightColor} 60px)`;
+    this._cardNode.style.setProperty('background', gradient);
   }
 }
 

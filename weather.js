@@ -273,6 +273,8 @@ class WindCard {
     this._styleCard(windSpeed, windDirection);
   }
 
+  // The arrow points in the wind's direction,
+  // and its size depends on the wind's speed.
   _styleArrow(windSpeed, windDirection) {
     const MIN_ARROW_HEIGHT = 10;
     const SIZE_MULTIPLIER = 5;
@@ -281,6 +283,8 @@ class WindCard {
     this._windArrowImage.style.setProperty('transform', `rotate(${windDirection}deg)`);
   }
 
+  // Thin stripes with just enough blur for anti-aliasing.
+  // Their direction lines up with the arrow, and their opacity depends on wind speed.
   _styleArrowContainer(windSpeed, windDirection) {
     const opacity = Math.min(0.02 * windSpeed, 1);
     const gradientAngle = windDirection - 90;
@@ -290,8 +294,8 @@ class WindCard {
     this._windArrowContainer.style.setProperty('background', gradient);
   }
 
+  // Like the arrow container, but with larger, blurrier, and more subdued stripes.
   _styleCard(windSpeed, windDirection) {
-    // Like the arrow container, but with larger, blurrier, and more subdued stripes.
     const opacity = Math.min(0.005 * windSpeed, 1);
     const gradientAngle = windDirection - 90;
     const lightColor = new colorTools.Color(70, 140, 210, opacity);

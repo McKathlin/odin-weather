@@ -272,7 +272,11 @@ class WindCard {
   }
 
   _styleArrow(windSpeed, windDirection) {
-    // TODO
+    const MIN_ARROW_HEIGHT = 10;
+    const SIZE_MULTIPLIER = 5;
+    const arrowSize = MIN_ARROW_HEIGHT + (windSpeed * SIZE_MULTIPLIER);
+    this._windArrowImage.style.setProperty('height', `${arrowSize}px`);
+    this._windArrowImage.style.setProperty('transform', `rotate(${windDirection}deg)`);
   }
 
   _styleBackground(windSpeed, windDirection) {

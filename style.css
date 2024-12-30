@@ -174,7 +174,7 @@ meter.thermometer::-moz-meter-bar {
 /* Wind card */
 
 #results #wind-card {
-  background-color: #794186;
+  background-color: darkslateblue;
   
   display: grid;
   justify-items: center;
@@ -192,10 +192,24 @@ meter.thermometer::-moz-meter-bar {
     grid-row: 2;
   }
 
-  .wind-arrow {
-    display: block;
+  .wind-graphic {
+    background-color: #794186;
+    border-radius: 5px;
+    height: 120px;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+
     grid-column: 2;
     grid-row: span 2;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wind-arrow {
+    display: block;
+    max-height: 200%;
   }
 }
 

@@ -33,7 +33,7 @@ const weatherImages = {
       credit: "Eberhard Grossgasteiger",
     },
     {
-      filename: "partly-cloudy-rodion-kutsaiev.jpg.jpg",
+      filename: "partly-cloudy-rodion-kutsaiev.jpg",
       credit: "Rodion Kutsaiev",
     },
     {

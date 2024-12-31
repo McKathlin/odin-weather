@@ -114,6 +114,16 @@ header {
   align-items: center;
 }
 
+#results .temp-card.high {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#results .temp-card.low {
+  grid-column: 1;
+  grid-row: 3;
+}
+
 #results .temp-card .heading {
   grid-column: 1;
   grid-row: 1;
@@ -169,6 +179,33 @@ meter.thermometer::-moz-meter-bar {
   background: var(--thermometer-fill-color);
   border: none;
   border-radius: calc(var(--thermometer-inner-width) / 2);
+}
+
+/* Conditions card */
+
+#results #conditions-card {
+  background-size: cover;
+  background-position: top;
+
+  grid-column: span 2;
+  grid-row: span 2;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#results #conditions-card .image-credit {
+  font-size: 0.75rem;
+  opacity: 0.65;
+  align-self: flex-end;
+}
+
+#results #conditions-card .description {
+  background-color: #00000080;
+  border-radius: 4px;
+  padding: 3px 7px;
+  align-self: flex-start;
 }
 
 /* Wind card */

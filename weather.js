@@ -51,7 +51,8 @@ function fetchEasterEggWeather (str) {
   if (str == 'example') {
     return {
       address: 'Example Town, Kentuckiana, USA',
-      description: 'default weather throughout the day',
+      conditions: ['Partially cloudy'],
+      description: 'Default weather throughout the day',
       highTemp: 55,
       lowTemp: 45,
       windDirection: 45,
@@ -60,7 +61,8 @@ function fetchEasterEggWeather (str) {
   } else if (str.includes('hotman') || str.includes('flamey-o')) {
     return {
       address: 'Flamey-O, Hotman',
-      description: 'scorching hot all day',
+      conditions: ['Clear'],
+      description: 'Scorching hot all day',
       highTemp: 120,
       lowTemp: 90,
       windDirection: 0,
@@ -69,6 +71,7 @@ function fetchEasterEggWeather (str) {
   } else if (str.endsWith('hoth')) {
     return {
       address: 'Ice Breeze, Hoth',
+      conditions: ['Snow', 'Hail', 'Cloudy'],
       description: 'freezing winds all day',
       highTemp: -20,
       lowTemp: -50,
@@ -78,6 +81,7 @@ function fetchEasterEggWeather (str) {
   } else if (str == 'one') {
     return {
       address: 'One',
+      conditions: '1',
       description: 'ONE!!!1',
       highTemp: 2,
       lowTemp: 1,
@@ -88,13 +92,6 @@ function fetchEasterEggWeather (str) {
     return null;
   }
 }
-
-// winddir key:
-// Direction is in degrees clockwise, starting from north-sourced.
-// 0 is from due north V (heading southward)
-// 90 is from due west > (heading eastward)
-// 180 is from due south ^ (heading northward)
-// 270 is from due east < (heading westward)
 
 //=============================================================================
 // Display Components
@@ -243,8 +240,88 @@ HighTempCard = new ThermometerCard(document.getElementById('high-temp-card'));
 LowTempCard = new ThermometerCard(document.getElementById('low-temp-card'));
 
 //-----------------------------------------------------------------------------
+// Conditions card
+//-----------------------------------------------------------------------------
+
+class ConditionsCard {
+  constructor(cardNode) {
+    this._cardNode = cardNode;
+    this._descriptionNode = cardNode.querySelector('.description');
+    this._imageCreditNode = cardNode.querySelector('.image-credit');
+  }
+
+  setConditions({ conditions, description, address }) {
+    this._descriptionNode.innerText = this._editDescription(description);
+
+    const imageInfo = this._pickImage(conditions, description, address);
+    this._cardNode.style.setProperty(
+      'background-image',
+      `url("./img/${imageInfo.filename}")`
+    );
+    this._imageCreditNode.innerText = imageInfo.credit;
+  }
+
+  _editDescription(description) {
+    if (description.endsWith('.')) {
+      return description.slice(0, description.length - 1);
+    } else {
+      return description
+    }
+  }
+
+  _pickImage(conditions, description, address) {
+    // Get the appropriate image list
+    let conditionKey = 'partlyCloudy';
+    if (conditions.includes('Snow')) {
+      conditionKey = 'snow';
+    } else if (description.toLowerCase().includes('storm')) {
+      conditionKey = 'storm';
+    } else if (conditions.includes('Rain')) {
+      conditionKey = 'rain';
+    } else if (conditions.includes('Clear')) {
+      conditionKey = 'clear';
+    } else if (conditions.includes('Overcast') || conditions.includes('Cloudy')) {
+      conditionKey = 'cloudy';
+    }
+    const imageList = weatherImages[conditionKey];
+
+    // Pick a deterministically seeded element from it
+    const seed = this._makeDailySeed(address);
+    return imageList[seed % imageList.length];
+  }
+
+  _makeDailySeed(seedString) {
+    const now = new Date();
+    return this._makeSeedNumber(seedString) + now.getMonth() + now.getDate();
+  }
+
+  _makeSeedNumber(seedString) {
+    const BASE_CODE = 'a'.charCodeAt(0);
+    let num = 0;
+    for (let i = 0; i < seedString.length; i++) {
+      num += seedString.charCodeAt(i) - BASE_CODE;
+    }
+    return Math.abs(num);
+  }
+}
+
+TodayConditionsCard = new ConditionsCard(
+  document.getElementById('conditions-card'));
+
+//-----------------------------------------------------------------------------
+// Quote card
+//-----------------------------------------------------------------------------
+
+// TODO
+
+//-----------------------------------------------------------------------------
 // Wind card
 //-----------------------------------------------------------------------------
+// Wind direction is in degrees clockwise, starting from north-sourced.
+// 0 is from due north V (heading southward)
+// 90 is from due west > (heading eastward)
+// 180 is from due south ^ (heading northward)
+// 270 is from due east < (heading westward)
 
 class WindCard {
   constructor(cardNode) {
@@ -362,6 +439,7 @@ async function showWeatherResults (simpleWeather) {
   HighTempCard.temperature = simpleWeather.highTemp;
   LowTempCard.temperature = simpleWeather.lowTemp;
   TodayWindCard.setWind(simpleWeather);
+  TodayConditionsCard.setConditions(simpleWeather);
 
   await sleep(200);
   await LoadingDisplay.hide();

@@ -13,7 +13,7 @@
 <body>
   <header>
     <form id="location-form">
-      <label for="location-input">Show the weather in</label>
+      <label for="location-input">Show weather in</label>
       <input id="location-input" name="location" type="search" placeholder="City or ZIP Code">
       <button id="fetch-weather-button">Go</button>
     </form>
@@ -21,6 +21,9 @@
   <main>
     <section id="loading" class="hidden">
       <p>Loading<span id="ellipsis"></span></p>
+    </section>
+    <section id="error-message" class="hidden">
+      <p>Sorry, we couldn't find the weather for that location!</p>
     </section>
     <section id="results" class="hidden">
       <h1 class="section-head"><span id="location-output"></span></h1>

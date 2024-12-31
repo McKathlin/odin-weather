@@ -309,12 +309,6 @@ TodayConditionsCard = new ConditionsCard(
   document.getElementById('conditions-card'));
 
 //-----------------------------------------------------------------------------
-// Quote card
-//-----------------------------------------------------------------------------
-
-// TODO
-
-//-----------------------------------------------------------------------------
 // Wind card
 //-----------------------------------------------------------------------------
 // Wind direction is in degrees clockwise, starting from north-sourced.
@@ -384,6 +378,79 @@ class WindCard {
 
 TodayWindCard = new WindCard(document.getElementById('wind-card'));
 
+//-----------------------------------------------------------------------------
+// Quote card
+//-----------------------------------------------------------------------------
+
+const QuoteCard = (function() {
+  const _quoteCard = document.getElementById('quote-card');
+  const _quoteTextNode = _quoteCard.querySelector('.quote-text');
+  const _quoteSourceNode = _quoteCard.querySelector('.quote-source');
+
+  const setWeather = function (weatherInfo) {
+    let quoteInfo = _fetchQuoteInfo(weatherInfo);
+    _quoteTextNode.innerText = quoteInfo.text;
+    _quoteSourceNode.innerText = quoteInfo.source;
+    if (quoteInfo.color) {
+      _quoteCard.style.setProperty('background-color', quoteInfo.color);
+    }
+  }
+
+  const _fetchQuoteInfo = function (weatherInfo) {
+    // weatherQuotes an defaultWeatherQuote are defined in weatherQuotes.js
+    const relevantQuotes = weatherQuotes.filter(
+      (quoteInfo) => _isRelevant(quoteInfo, weatherInfo)
+    );
+
+    if (0 == relevantQuotes.length) {
+      return defaultWeatherQuote;
+    }
+
+    const seed = Math.floor(weatherInfo.windDirection) + new Date().getDate();
+    console.log("seed", seed);
+    return relevantQuotes[seed % relevantQuotes.length];
+  }
+
+  const _isRelevant = function (quoteInfo, weather) {
+    if ('minTemp' in quoteInfo && weather.lowTemp < quoteInfo.minTemp) {
+      return false;
+    }
+    if ('maxTemp' in quoteInfo && weather.highTemp > quoteInfo.maxTemp) {
+      return false;
+    }
+
+    if ('minWindSpeed' in quoteInfo && weather.windSpeed < quoteInfo.minWindSpeed) {
+      return false;
+    }
+    if ('maxWindSpeed' in quoteInfo && weather.windSpeed > quoteInfo.maxWindSpeed) {
+      return false;
+    }
+
+    if ('condition' in quoteInfo) {
+      if (!weather.conditions.includes(quoteInfo.condition)) {
+        return false;
+      }
+    }
+
+    if ('precipitation' in quoteInfo) {
+      if (weather.conditions.includes('Rain') || weather.conditions.includes('Snow')) {
+        if (!quoteInfo.precipitation) {
+          return false;
+        }
+      } else {
+        if (quoteInfo.precipitation) {
+          return false;
+        }
+      }
+    }
+
+    // If we're here, all tests have passed.
+    return true;
+  }
+
+  return { setWeather };
+}());
+
 //=============================================================================
 // Page Elements and Setup
 //=============================================================================
@@ -440,6 +507,7 @@ async function showWeatherResults (simpleWeather) {
   LowTempCard.temperature = simpleWeather.lowTemp;
   TodayWindCard.setWind(simpleWeather);
   TodayConditionsCard.setConditions(simpleWeather);
+  QuoteCard.setWeather(simpleWeather);
 
   await sleep(200);
   await LoadingDisplay.hide();

@@ -10,7 +10,7 @@ body {
   --text-color: #24282c;
   --back-color: #d4dde6;
 
-  --card-back-color: orange;
+  --card-back-color: rgb(102, 27, 90);
   --card-text-color: #ffffff;
 
   font-family: var(--default-font, sans-serif);
@@ -64,7 +64,7 @@ header {
   max-width: 100%;
 
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: min-content 1fr;
   gap: 16px;
 }
 
@@ -88,7 +88,7 @@ header {
 
 #results .card .measure-unit {
   font-weight: normal;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 /* Temperature cards */
@@ -105,6 +105,7 @@ header {
   --thermometer-fill-color: #991122;
 
   min-height: calc(var(--thermometer-height) + 20px);
+  min-width: 10rem;
   padding: 8px 16px;
 
   display: grid;
@@ -212,7 +213,10 @@ meter.thermometer::-moz-meter-bar {
 
 #results #wind-card {
   background-color: #5447a5;
-  
+  min-width: 16rem;
+
+  grid-column: span 2;
+
   display: grid;
   justify-items: center;
   align-items: center;
@@ -251,13 +255,66 @@ meter.thermometer::-moz-meter-bar {
   }
 }
 
+/* Quote card */
+
+#results #quote-card {
+  grid-column: span 2;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+#results #quote-card .quote-text {
+  font-size: 2rem;
+}
+
+#results #quote-card .quote-text {
+  font-size: 2rem;
+}
+
+#results #quote-card .quote-text::before {
+  content: '“';
+}
+
+#results #quote-card .quote-text::after {
+  content: '”';
+}
+
+#results #quote-card .quote-source {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  align-self: flex-end;
+  margin-right: 3rem;
+}
+
+#results #quote-card .quote-source::before {
+  content: '~ ';
+}
+
 /* Footer */
 
 footer {
   padding: 8px;
   flex: 0;
+  opacity: 0.65;
 }
 
 footer a {
   color: var(--text-color);
+}
+
+/* Grid layout for wider screens */
+
+@media (min-width: 50rem) {
+  #results {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #results #wind-card {
+    grid-column: 3;
+    grid-row: 4;
+  }
 }

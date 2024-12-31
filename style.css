@@ -80,6 +80,7 @@ header form input {
 
 #results .section-head {
   text-align: center;
+  opacity: 0.8;
 
   grid-column: 1 / -1;
 }
@@ -314,10 +315,12 @@ footer a {
 
 /* Grid layout for wider screens */
 
-@media (min-width: 50rem) {
+@media (min-width: 45rem) {
   #results {
     grid-template-columns: 15rem 1fr 20rem;
-    grid-template-rows: min-content repeat(3, minmax(10rem, calc(30vh - 3rem)));
+    grid-template-rows: min-content repeat(3,
+      clamp(10rem, calc(30vh - 3rem), 16rem)
+    );
   }
 
   #results .section-head {

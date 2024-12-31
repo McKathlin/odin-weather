@@ -47,7 +47,8 @@ function simplifyWeather (fullReport) {
   };
 }
 
-function fetchEasterEggWeather (str) {
+function fetchEasterEggWeather (locationStr) {
+  const str = locationStr.toLowerCase();
   if (str == 'example') {
     return {
       address: 'Example Town, Kentuckiana, USA',

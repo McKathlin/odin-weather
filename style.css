@@ -330,6 +330,11 @@ footer {
   opacity: 0.65;
 }
 
+footer span {
+  display: inline-block;
+  margin: 0 4px;
+}
+
 footer a {
   color: var(--text-color);
 }

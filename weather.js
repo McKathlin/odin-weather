@@ -461,6 +461,7 @@ const QuoteCard = (function() {
 const locationInput = document.getElementById('location-input');
 const fetchWeatherButton = document.getElementById('fetch-weather-button');
 
+const errorSection = document.getElementById('error-message');
 const resultsSection = document.getElementById('results');
 
 //-----------------------------------------------------------------------------
@@ -491,13 +492,19 @@ async function loadWeatherResults () {
   }
 
   // Loading...
+  await hideElement(errorSection);
   await hideElement(resultsSection);
   await LoadingDisplay.show();
-  await sleep(1000);
+  await sleep(500);
 
   // Show the results when they're ready.
-  const simpleWeather = await fetchWeatherIn(location);
-  await showWeatherResults(simpleWeather);
+  try {
+    const simpleWeather = await fetchWeatherIn(location);
+    await showWeatherResults(simpleWeather);
+  } catch (err) {
+    console.log(err);
+    await showErrorMessage();
+  }
 }
 
 async function showWeatherResults (simpleWeather) {
@@ -513,4 +520,9 @@ async function showWeatherResults (simpleWeather) {
   await sleep(200);
   await LoadingDisplay.hide();
   await showElement(resultsSection);
+}
+
+async function showErrorMessage () {
+  await LoadingDisplay.hide();
+  await showElement(errorSection);
 }

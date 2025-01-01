@@ -10,7 +10,7 @@ body {
   --text-color: #24282c;
   --back-color: #d4dde6;
 
-  --card-back-color: rgb(102, 27, 90);
+  --card-back-color: #661b5a;
   --card-text-color: #ffffff;
 
   font-family: var(--default-font, sans-serif);
@@ -63,6 +63,27 @@ header form input {
 
 #loading {
   width: 16ch;
+  margin-top: 2rem;
+}
+
+#loading p {
+  font-size: 1.4rem;
+  opacity: 0.65;
+}
+
+/* Error Message section */
+
+#error-message {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+#error-message p {
+  font-size: 1.4rem;
+  color: white;
+  background-color: #661b1b;
+  padding: 8px 16px;
+  border-radius: 10px;
 }
 
 /* Results section */

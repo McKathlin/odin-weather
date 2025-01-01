@@ -325,6 +325,7 @@ meter.thermometer::-moz-meter-bar {
 /* Footer */
 
 footer {
+  text-align: center;
   margin: 8px;
   flex: 0;
   opacity: 0.65;
@@ -332,7 +333,10 @@ footer {
 
 footer span {
   display: inline-block;
-  margin: 0 4px;
+}
+
+footer span.divider {
+  display: none;
 }
 
 footer a {
@@ -394,5 +398,10 @@ footer a {
 
   #results #quote-card .quote-source {
     font-size: 1.2rem;
+  }
+
+  footer span.divider {
+    display: block;
+    margin: 0 4px;
   }
 }

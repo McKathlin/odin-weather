@@ -10,8 +10,13 @@ async function fetchWeatherIn (locationStr) {
     return easterEggWeather;
   }
 
-  const BASE_PATH = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
+  // The API key below is here for convenience; it's a free key for a demo app.
+  // It is generally not good practice to expose an API key on the front end,
+  // as a third party may discover the key and make unauthorized use of it.
+  // For this reason, paid API keys should be hidden securely on the server.
   const MY_FREE_KEY = 'J9RKTKAX2HRTXCXKVAQE4DERZ';
+  
+  const BASE_PATH = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
   const RESPONSE_STATUS_OK = 200;
 
   const location = encodeURIComponent(locationStr);
